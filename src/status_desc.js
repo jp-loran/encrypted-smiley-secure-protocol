@@ -7,6 +7,10 @@ module.exports = {
     name: 'REPLENISH_STORED',
     description: 'Event received when the device has completed the Replenish Stored Notes (0x80) command'
   },
+  115: {
+    name: 'REPLENISHMENT_CASSETTE_TRAY_FULL',
+    description: 'NV4000 Replenishment cassette tray full'
+  },
   116: {
     name: 'NOTE_TO_RC_TRAY',
     description: 'When a rejected note from replenishment cassette is moved to the reject tray of the cassette'
@@ -103,6 +107,10 @@ module.exports = {
   206: {
     name: 'NOTE_HELD_IN_BEZEL',
     description: 'Reported when a dispensing note is held in the bezel of the payout device.',
+  },
+  207: {
+    name: 'DEVICE_FULL',
+    description: 'The device has detected that it is full of coins/banknotes and no more can be added.',
   },
   209: {
     name: 'BAR_CODE_TICKET_ACKNOWLEDGE',

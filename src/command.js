@@ -288,10 +288,10 @@ module.exports = {
   EMPTY_ALL: {
     code: 63,
     encrypted: true,
-    args: false,
-    device: ['SMART Hopper', 'SMART Payout', 'NV11'],
+    args: true,
+    device: ['SMART Hopper', 'SMART Payout', 'NV11', 'NV4000'],
     description:
-      'This command will direct all stored monies to the cash box without reporting any value and reset all the stored counters to zero. See Smart Empty command to record the value emptied.',
+      'This command will direct all stored monies to the cash box without reporting any value and reset all the stored counters to zero. See Smart Empty command to record the value emptied. For NV4000 devices it accepts as an argument the desired module to empty',
   },
   SET_COIN_MECH_INHIBITS: {
     code: 64,

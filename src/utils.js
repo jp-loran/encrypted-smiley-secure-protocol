@@ -168,7 +168,10 @@ function argsToByte(command, args, protocolVersion) {
         )
       }
       return [...int16LE(args.min_possible_payout)].concat([...int32LE(args.amount)])
-    } else if (command === 'SET_COIN_MECH_INHIBITS') {
+    } else if (command === 'EMPTY_ALL') {
+      return [...int32LE(args.module)]
+    }
+     else if (command === 'SET_COIN_MECH_INHIBITS') {
       if (protocolVersion >= 6) {
         return [args.inhibited ? 0x00 : 0x01].concat([...int32LE(args.amount)], [...Buffer.from(args.country_code, 'ascii')])
       }
@@ -384,16 +387,17 @@ function parseData(data, currentCommand, protocolVersion, deviceUnitType) {
       //TODO parse all modules
       switch (data[0]){
         case 0x03:
+          console.log(data)
           const moduleFlags = data[11].toString(2).padStart(8,'0')
           result.info.module = "Replenishment Cassette"
           result.info.note_value = Buffer.from(data.slice(2,6)).readInt32LE()
           result.info.note_currency = Buffer.from(data.slice(6,9)).toString()
           result.info.level = Buffer.from(data.slice(9,11)).readInt16LE()
           result.info.flags = {
-            cassette_almost_empty: moduleFlags[0] === 1,
-            cassette_is_empty: moduleFlags[1] === 1,
-            tray_is_full: moduleFlags[2] === 1,
-            single_denomination_mode: moduleFlags[4] === 1,
+            cassette_almost_empty: parseInt(moduleFlags[7]) === 1,
+            cassette_is_empty: parseInt(moduleFlags[6]) === 1,
+            tray_is_full: parseInt(moduleFlags[5]) === 1,
+            note_loaded_in_dock: parseInt(moduleFlags[4]) === 1,
           }
           break;
         default:
@@ -401,10 +405,10 @@ function parseData(data, currentCommand, protocolVersion, deviceUnitType) {
       }
       const moduleStatus = data[1].toString(2).padStart(8,'0')
       result.info.status = {
-        device_out_of_service: moduleStatus[0] === 1,
-        device_has_incompatible_currency: moduleStatus[1] === 1,
-        device_requires_emptying: moduleStatus[2] === 1,
-        device_is_full: moduleStatus[3] === 1,
+        device_out_of_service: parseInt(moduleStatus[3]) === 1,
+        device_has_incompatible_currency: parseInt(moduleStatus[2]) === 1,
+        device_requires_emptying: parseInt(moduleStatus[1]) === 1,
+        device_is_full: parseInt(moduleStatus[0]) === 1,
       }
 
     }
