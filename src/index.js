@@ -109,13 +109,21 @@ module.exports = class SSP extends EventEmitter {
     return this.id | this.sequence
   }
 
+  validateBufferSize(primeBuffer){
+    if (primeBuffer.length < 2) {
+      primeBuffer = Buffer.concat([Buffer.alloc(2 - primeBuffer.length, 0), primeBuffer]);
+    }
+    return primeBuffer
+  }
+
   initEncryption() {
     return Promise.all([
-      BigInt(dh.createDiffieHellman(16).getPrime().readUInt16BE()),
-      BigInt(dh.createDiffieHellman(16).getPrime().readUInt16BE()),
-      BigInt(dh.createDiffieHellman(16).getPrime().readUInt16BE()),
+      BigInt(this.validateBufferSize(dh.createDiffieHellman(16).getPrime()).readUInt16BE()),
+      BigInt(this.validateBufferSize(dh.createDiffieHellman(16).getPrime()).readUInt16BE()),
+      BigInt(this.validateBufferSize(dh.createDiffieHellman(16).getPrime()).readUInt16BE()),
     ])
       .then(res => {
+        res.sort((a, b) => (a > b ? -1 : 1));
         this.keys.generatorKey = res[0]
         this.keys.modulusKey = res[1]
         this.keys.hostRandom = res[2]
